@@ -1,15 +1,59 @@
-import datosJson from "../data/data.json" assert { type: "json" };
 import { Gift } from "./clases.js";
-
-// aqui es donde chuchas se cargan los archivos del pto local storage
-let datos = JSON.parse(localStorage.getItem("giftData")) || datosJson;
 
 const cuerpoTabla = document.querySelector("#cuerpo-tabla");
 const myModal = new bootstrap.Modal(document.getElementById("modalGift"));
 
 let idGiftUpdate = null;
 
+
+const cargarDatosDesdeLocalStorage = () => {
+  const datos = JSON.parse(localStorage.getItem('giftCards')) || [];
+
+ 
+  if (datos.length === 0) {
+    const datosPredeterminados = [
+      {
+        "id": 1,
+        "gift": "Spotify Premium",
+        "tipo": "Suscripción",
+        "tiempo": "1 mes",
+        "precio": 250,
+        "imagen": "https://http2.mlstatic.com/D_NQ_NP_714537-MLA53061400161_122022-V.jpg"
+      },
+      {
+        "id": 2,
+        "gift": "XBOX Game Pass Ultimate",
+        "tipo": "Suscripción",
+        "tiempo": "1 mes",
+        "precio": 300,
+        "imagen": "https://http2.mlstatic.com/D_NQ_NP_991054-MLA44207335557_112020-O.jpg"
+      },
+      {
+        "id": 3,
+        "gift": "HBO Max",
+        "tipo": "Suscripción",
+        "tiempo": "1 mes",
+        "precio": 290,
+        "imagen": "https://i0.wp.com/fhalcongaming.com/wp-content/uploads/2021/07/GIFTC0109_1.png?fit=1080%2C1080&ssl=1"
+      }
+ 
+    ];
+    localStorage.setItem('giftCards', JSON.stringify(datosPredeterminados));
+    return datosPredeterminados;
+  }
+
+  return datos;
+};
+
+const datos = cargarDatosDesdeLocalStorage();
+
+
+const guardarDatosEnLocalStorage = (nuevosDatos) => {
+  localStorage.setItem('giftCards', JSON.stringify(nuevosDatos));
+};
+
 window.mostrarModal = (id) => {
+  console.log(id);
   idGiftUpdate = id;
   let index = datos.findIndex((item) => item.id == idGiftUpdate);
 
@@ -31,11 +75,11 @@ const giftUpdate = (e) => {
   datos[index].precio = document.querySelector("#precioModal").value;
   datos[index].imagen = document.querySelector("#imagenModal").value;
 
-
-  // aca se guarda la actualizacion de esta chucheria
-  guardarEnLocalStorage();
   cargarTabla();
   myModal.hide();
+
+ 
+  guardarDatosEnLocalStorage(datos);
 };
 
 const cargarTabla = () => {
@@ -46,7 +90,8 @@ const cargarTabla = () => {
     const celdas = `<th>${item.gift}</th>
         <td>${item.tipo}</td>
         <td>${item.tiempo}</td>
-        <td>$${item.precio}</td>
+        <td>${item.precio}</td>
+        <td><img src="${item.imagen}" width="100px" height="100%" /></td>
         <td>
         <div class="d-flex gap-2">
         <button class="btn btn-outline-warning" onclick="mostrarModal(${item.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>
@@ -71,10 +116,11 @@ const agregarGift = (event) => {
   let imagen = document.querySelector("#imagen").value;
 
   datos.push(new Gift(id, gift, tipo, tiempo, precio, imagen));
-
-  guardarEnLocalStorage();
   document.querySelector("#formGift").reset();
   cargarTabla();
+
+ 
+  guardarDatosEnLocalStorage(datos);
 };
 
 window.borrarGift = (id) => {
@@ -86,14 +132,11 @@ window.borrarGift = (id) => {
 
   if (validar) {
     datos.splice(index, 1);
-    guardarEnLocalStorage();
     cargarTabla();
-  }
-};
 
-// aqui se hace la funcion para el local storage de estas chucheria
-const guardarEnLocalStorage = () => {
-  localStorage.setItem("giftData", JSON.stringify(datos));
+    
+    guardarDatosEnLocalStorage(datos);
+  }
 };
 
 cargarTabla();
