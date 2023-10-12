@@ -31,11 +31,11 @@ const giftUpdate = (e) => {
 
   const imageUrl = document.querySelector("#imagenModal").value;
 
+  
   document.querySelector("#imagenPreview").src = imageUrl;
 
   datos[index].imagen = imageUrl;  
 
-  guardarDatosLocalStorage();
   cargarTabla();
   myModal.hide();
 };
@@ -74,7 +74,6 @@ const agregarGift = (event) => {
   let imagen = document.querySelector("#imagen").value;
 
   datos.push(new Gift(id, gift, tipo, tiempo, precio, imagen));
-  guardarDatosLocalStorage();
   document.querySelector("#formGift").reset();
   cargarTabla();
 };
@@ -88,24 +87,10 @@ window.borrarGift = (id) => {
 
   if (validar) {
     datos.splice(index, 1);
-    guardarDatosLocalStorage();
     cargarTabla();
   }
 };
 
-const guardarDatosLocalStorage = () => {
-  localStorage.setItem('datos', JSON.stringify(datos));
-}
-
-const cargarDatosLocalStorage = () => {
-  const datosGuardados = localStorage.getItem('datos');
-  if (datosGuardados) {
-    datos = JSON.parse(datosGuardados);
-  }
-}
-
-// Llamar a la función cuando se carga la página
-cargarDatosLocalStorage();
 cargarTabla();
 
 document.querySelector("#formGift").addEventListener("submit", agregarGift);
