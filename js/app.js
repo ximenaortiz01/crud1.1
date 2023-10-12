@@ -142,4 +142,4 @@ window.borrarGift = (id) => {
 cargarTabla();
 
 document.querySelector("#formGift").addEventListener("submit", agregarGift);
-document.querySelector("#formModal").addEventListener("submit", giftUpdate);
+document.querySelector("#formModal").addEventListener("submit", giftUpdate);
