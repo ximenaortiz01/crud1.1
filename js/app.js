@@ -127,7 +127,7 @@ window.borrarGift = (id) => {
   let index = datos.findIndex((item) => item.id == id);
 
   let validar = confirm(
-    Está seguro/a que quiere eliminar la gift card ${datos[index].gift}?
+    'Está seguro/a que quiere eliminar la gift card ${datos[index].gift}?'
   );
 
   if (validar) {
@@ -142,4 +142,4 @@ window.borrarGift = (id) => {
 cargarTabla();
 
 document.querySelector("#formGift").addEventListener("submit", agregarGift);
-document.querySelector("#formModal").addEventListener("submit", giftUpdate);
+document.querySelector("#formModal").addEventListener("submit", giftUpdate);
