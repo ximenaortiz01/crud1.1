@@ -1,5 +1,8 @@
-import datos from "../data/data.json" assert { type: "json" };
+import datosJson from "../data/data.json" assert { type: "json" };
 import { Gift } from "./clases.js";
+
+// aqui es donde chuchas se cargan los archivos del pto local storage
+let datos = JSON.parse(localStorage.getItem("giftData")) || datosJson;
 
 const cuerpoTabla = document.querySelector("#cuerpo-tabla");
 const myModal = new bootstrap.Modal(document.getElementById("modalGift"));
@@ -7,7 +10,6 @@ const myModal = new bootstrap.Modal(document.getElementById("modalGift"));
 let idGiftUpdate = null;
 
 window.mostrarModal = (id) => {
-  console.log(id);
   idGiftUpdate = id;
   let index = datos.findIndex((item) => item.id == idGiftUpdate);
 
@@ -29,13 +31,9 @@ const giftUpdate = (e) => {
   datos[index].precio = document.querySelector("#precioModal").value;
   datos[index].imagen = document.querySelector("#imagenModal").value;
 
-  const imageUrl = document.querySelector("#imagenModal").value;
 
-  
-  document.querySelector("#imagenPreview").src = imageUrl;
-
-  datos[index].imagen = imageUrl;  
-
+  // aca se guarda la actualizacion de esta chucheria
+  guardarEnLocalStorage();
   cargarTabla();
   myModal.hide();
 };
@@ -49,7 +47,6 @@ const cargarTabla = () => {
         <td>${item.tipo}</td>
         <td>${item.tiempo}</td>
         <td>$${item.precio}</td>
-        <td><img src="${item.imagen}" style="max-width: 100px; max-height: 100px;"></td>
         <td>
         <div class="d-flex gap-2">
         <button class="btn btn-outline-warning" onclick="mostrarModal(${item.id})"><i class="fa fa-pencil" aria-hidden="true"></i></button>
@@ -66,7 +63,7 @@ const cargarTabla = () => {
 const agregarGift = (event) => {
   event.preventDefault();
 
-  let id = datos.at(-1).id + 1;
+  let id = datos.length > 0 ? datos[datos.length - 1].id + 1 : 1;
   let gift = document.querySelector("#gift").value;
   let tipo = document.querySelector("#tipo").value;
   let tiempo = document.querySelector("#tiempo").value;
@@ -74,6 +71,8 @@ const agregarGift = (event) => {
   let imagen = document.querySelector("#imagen").value;
 
   datos.push(new Gift(id, gift, tipo, tiempo, precio, imagen));
+
+  guardarEnLocalStorage();
   document.querySelector("#formGift").reset();
   cargarTabla();
 };
@@ -82,13 +81,19 @@ window.borrarGift = (id) => {
   let index = datos.findIndex((item) => item.id == id);
 
   let validar = confirm(
-    `Está seguro/a que quiere eliminar la gift card ${datos[index].gift}?`
+    Está seguro/a que quiere eliminar la gift card ${datos[index].gift}?
   );
 
   if (validar) {
     datos.splice(index, 1);
+    guardarEnLocalStorage();
     cargarTabla();
   }
+};
+
+// aqui se hace la funcion para el local storage de estas chucheria
+const guardarEnLocalStorage = () => {
+  localStorage.setItem("giftData", JSON.stringify(datos));
 };
 
 cargarTabla();
